@@ -52,6 +52,8 @@ void setup()
   Serial.println("");
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
+  Serial.print("Running on version: ");
+  Serial.println(COMMIT_HASH);
 }
 
 void loop()
