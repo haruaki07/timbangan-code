@@ -5,11 +5,13 @@
 
 const char *box_id = "1";
 
+// ultrasonic
 const int trigPin1 = 13;
 const int echoPin1 = 12;
 const int trigPin2 = 14;
 const int echoPin2 = 27;
 
+// loadcell
 const int doutPin = 4;
 const int clkPin = 15;
 const float calibration_factor = 106025.00;
@@ -17,7 +19,7 @@ const float calibration_factor = 106025.00;
 const char *ssid = "HUAWEI-562C";
 const char *password = "82743342";
 const float send_record_weight_thres = 1.0;
-const char *endpoint = "http://139.59.107.28/api/v1/record";
+const char *endpoint = "http://128.199.72.109/api/v1/record";
 
 unsigned long lastTime = 0;
 unsigned long read_delay = 1000;
@@ -62,6 +64,11 @@ void loop()
   if ((millis() - lastTime) > read_delay)
   {
     float weight = read_weight();
+    Serial.print(weight);
+    Serial.print(" ");
+    Serial.print(read_ultra_1());
+    Serial.print(" ");
+    Serial.println(read_ultra_2());
     if (weight >= send_record_weight_thres)
     {
       float length = read_length();
@@ -123,7 +130,7 @@ float read_ultra_1()
   digitalWrite(trigPin1, LOW);
 
   float duration = pulseIn(echoPin1, HIGH);
-  float distance = (duration * .0343) / 2 * 3;
+  float distance = (duration * .0343) / 2;
   return distance;
 }
 
@@ -136,6 +143,6 @@ float read_ultra_2()
   digitalWrite(trigPin2, LOW);
 
   float duration = pulseIn(echoPin2, HIGH);
-  float distance = (duration * .0343) / 2 * 3;
+  float distance = (duration * .0343) / 2;
   return distance;
 }
