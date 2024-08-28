@@ -2,6 +2,7 @@
 #include "WiFi.h"
 #include "HTTPClient.h"
 #include <HX711.h>
+#include <WiFiManager.h>
 
 const char *box_id = "1";
 
@@ -29,7 +30,10 @@ float read_ultra_2();
 float read_weight();
 float read_length();
 
+bool wifiConnected = false;
+
 HX711 scale;
+WiFiManager wifiManager;
 
 void setup()
 {
@@ -44,16 +48,29 @@ void setup()
   scale.set_scale(calibration_factor); // Adjust to this calibration factor
   scale.tare();                        // Reset the scale to 0
 
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting");
-  while (WiFi.status() != WL_CONNECTED)
+  wifiConnected = wifiManager.autoConnect(String("dhs-" + String(box_id) + "-wifi-setup").c_str());
+
+  if (!wifiConnected)
   {
-    delay(500);
-    Serial.print(".");
+    Serial.println("Failed to connect wifi");
+    ESP.restart();
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+  else
+  {
+    Serial.print("Connected to WiFi network with IP Address: ");
+    Serial.println(WiFi.localIP());
+  }
+
+  // WiFi.begin(ssid, password);
+  // Serial.println("Connecting");
+  // while (WiFi.status() != WL_CONNECTED)
+  // {
+  // delay(500);
+  // Serial.print(".");
+  // }
+  // Serial.println("");
+  // // Serial.print("Connected to WiFi network with IP Address: ");
+  // Serial.println(WiFi.localIP());
   Serial.print("Running on version: ");
   Serial.println(COMMIT_HASH);
 }
